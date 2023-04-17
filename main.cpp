@@ -23,7 +23,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	win->CreateGameWindow(L"LD2A_04_カナイ_ミント_AL3");
 	
 	// DirectX初期化処理
-	dxCommon = DirectXCommon::GetInstance();
+	dxCommon = DirectXCommon::GetInstance(); 
 	dxCommon->Initialize(win);
 
 #pragma region 汎用機能初期化
