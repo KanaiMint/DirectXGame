@@ -4,7 +4,7 @@
 #include"Input.h"
 #include"Matrix4x4.h"
 #include"ImGuiManager.h"
-
+#include"PlayerBullet.h"
 class Player {
 private:
 	//ワールド返還データ
@@ -20,6 +20,9 @@ private:
 	Matrix4x4 AffineMatrix = {};
 	float Inputfloat3[3] = {};
 
+	//弾
+	PlayerBullet* bullet_ = nullptr;
+
 	public:
 		/// <summary>
 		/// 
@@ -30,7 +33,11 @@ private:
 
 		void Update();
 
+	    void CharaRotate();
+
 	    void CharaMove(Vector3& move, const float& kCharacterSpeed);
 
 		void Draw(ViewProjection viewProjection);
+
+		void Attack();
 };

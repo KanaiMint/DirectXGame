@@ -24,7 +24,15 @@ void Player::Update() {
 	//kyらの移動の速さ
 	const float kCharacterSpeed = 0.2f;
 
-	CharaMove(move, kCharacterSpeed);
+	CharaMove(move, kCharacterSpeed);//キャラクター移動処理
+	CharaRotate();//キャラクター旋回処理
+	Attack();//キャラクター攻撃処理
+
+	//弾の更新
+	if (bullet_ != nullptr) {
+		bullet_->Update();
+	}
+
 	worldTransform_.translation_ += move;
 	worldTransform_.matWorld_= MakeAffineMatrix(
     worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
@@ -56,11 +64,37 @@ void Player::Update() {
 	ImGui::End();
 }
 
+void Player::CharaRotate() {
+	const float kRotSpeed = 0.02f;
+	// 押した方向で移動ベクトルを変更
+	if (input_->PushKey(DIK_A)) {
+		worldTransform_.rotation_.y -= kRotSpeed;
+	} else if (input_->PushKey(DIK_D)) {
+		worldTransform_.rotation_.y += kRotSpeed;
+	}
+}
+
 
 void Player::Draw(ViewProjection viewProjection) {
 //3Dモデルを描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	//弾描画
+	if (bullet_ != nullptr) {
+		bullet_->Draw(viewProjection);
+	}
 
+}
+
+void Player::Attack() 
+{ 
+	if (input_->TriggerKey(DIK_SPACE)) {
+	//弾を生成し、初期化
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Initialize(model_, worldTransform_.translation_);
+	
+	//弾を登録する
+		bullet_ = newBullet;
+	} 
 
 }
 
