@@ -1,6 +1,9 @@
 #pragma once
 #include"Model.h"
 #include"WorldTransform.h"
+#include"Input.h"
+#include"Matrix4x4.h"
+#include"ImGuiManager.h"
 
 class Player {
 private:
@@ -10,6 +13,12 @@ private:
 	Model* model_ = nullptr;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
+	//キーボード入力
+	Input* input_ = nullptr;
+
+	//スケーリング行列の作成
+	Matrix4x4 AffineMatrix = {};
+	float Inputfloat3[3] = {};
 
 	public:
 		/// <summary>
@@ -20,6 +29,8 @@ private:
 		void Initialize(Model* model,uint32_t textureHandle );
 
 		void Update();
+
+	    void CharaMove(Vector3& move, const float& kCharacterSpeed);
 
 		void Draw(ViewProjection viewProjection);
 };

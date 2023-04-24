@@ -1,12 +1,14 @@
 #include "GameScene.h"
 #include "TextureManager.h"
 #include <cassert>
+#include"AxisIndicator.h"
 
 GameScene::GameScene() {}
 
 GameScene::~GameScene() { 
 	delete model_; 
 	delete player_;
+	delete debugCamera_;
 }
 
 void GameScene::Initialize() {
@@ -23,6 +25,12 @@ void GameScene::Initialize() {
 	player_ = new Player();
 	//ジキャラの初期化
 	player_->Initialize(model_,textureHandle_);
+	//デバックカメラの生成
+	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
+	//軸方向表示の表示を有効にする
+	AxisIndicator::GetInstance()->SetVisible(true);
+	//軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
+	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
 
 }
@@ -30,6 +38,27 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 //ジキャラの更新
 	player_->Update();
+	//デバックカメラの更新
+	debugCamera_->Update();
+	if (isDebugCameraActive_ == true) {
+		debugCamera_->Update();
+		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
+	} else {
+		//ビュープロジェクション行列の更新と転送
+		viewProjection_.UpdateMatrix();
+	}
+	#ifdef _DEBUG
+	if (input_->TriggerKey(DIK_C)) {
+		if (isDebugCameraActive_ == false) {
+			isDebugCameraActive_ = true;		
+		} else {
+
+			isDebugCameraActive_ = false;
+		}
+	}
+	#endif
 }
 
 void GameScene::Draw() {

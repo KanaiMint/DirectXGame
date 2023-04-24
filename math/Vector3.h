@@ -22,8 +22,10 @@ struct Vector3 final {
 	static float Length(const Vector3& v);
 	//正規化
 	static Vector3 Normalize(const Vector3& v);
+
+	Vector3& operator+=(const Vector3& other);
 };
 
 static const int kColumWidth = 60;
 
- void VecScreenPrintf(int x, int y, const Vector3& vector, const char* label);
+ 
