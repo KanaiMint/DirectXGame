@@ -16,6 +16,13 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	
 }
 
+Player::~Player() 
+{
+	for (PlayerBullet* bullet : bullets_) {
+		delete bullet;
+	}
+}
+
 void Player::Update() {
 //行列をバッファに転送
 	worldTransform_.TransferMatrix();
@@ -29,8 +36,8 @@ void Player::Update() {
 	Attack();//キャラクター攻撃処理
 
 	//弾の更新
-	if (bullet_ != nullptr) {
-		bullet_->Update();
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Update();
 	}
 
 	worldTransform_.translation_ += move;
@@ -79,8 +86,9 @@ void Player::Draw(ViewProjection viewProjection) {
 //3Dモデルを描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 	//弾描画
-	if (bullet_ != nullptr) {
-		bullet_->Draw(viewProjection);
+	for (PlayerBullet* bullet : bullets_) {
+	
+	bullet->Draw(viewProjection);
 	}
 
 }
@@ -88,12 +96,17 @@ void Player::Draw(ViewProjection viewProjection) {
 void Player::Attack() 
 { 
 	if (input_->TriggerKey(DIK_SPACE)) {
+		////弾があれば開放
+		//if (bullet_) {
+		//	delete bullet_;
+		//	bullet_ = nullptr;
+		//}
 	//弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
 		newBullet->Initialize(model_, worldTransform_.translation_);
 	
 	//弾を登録する
-		bullet_ = newBullet;
+		bullets_.push_back(newBullet);
 	} 
 
 }

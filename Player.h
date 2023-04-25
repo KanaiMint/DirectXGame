@@ -5,6 +5,7 @@
 #include"Matrix4x4.h"
 #include"ImGuiManager.h"
 #include"PlayerBullet.h"
+#include <list>
 class Player {
 private:
 	//ワールド返還データ
@@ -21,7 +22,7 @@ private:
 	float Inputfloat3[3] = {};
 
 	//弾
-	PlayerBullet* bullet_ = nullptr;
+	std::list<PlayerBullet*> bullets_;
 
 	public:
 		/// <summary>
@@ -30,7 +31,7 @@ private:
 		/// <param name="model">モデル</param>
 		/// <param name="textureHandle">テクスチャハンドル</param>
 		void Initialize(Model* model,uint32_t textureHandle );
-
+	    ~Player();
 		void Update();
 
 	    void CharaRotate();
