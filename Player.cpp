@@ -24,6 +24,15 @@ Player::~Player()
 }
 
 void Player::Update() {
+	//ですフラグの立った球の削除
+	bullets_.remove_if([](PlayerBullet* bullet) {
+		if (bullet->IsDead()==true) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
+
 //行列をバッファに転送
 	worldTransform_.TransferMatrix();
 	//キャラの移動ベクトル
@@ -101,9 +110,14 @@ void Player::Attack()
 		//	delete bullet_;
 		//	bullet_ = nullptr;
 		//}
+		// 弾の速度
+	const float kBulletSpeed = 1.0f;
+	Vector3 velocity(0, 0, kBulletSpeed);
+	//速度ベクトルヲ自機の向きに合わせて回転させる
+	velocity = TransformNormal(velocity, worldTransform_.matWorld_);
 	//弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_);
+		newBullet->Initialize(model_, worldTransform_.translation_,velocity);
 	
 	//弾を登録する
 		bullets_.push_back(newBullet);
