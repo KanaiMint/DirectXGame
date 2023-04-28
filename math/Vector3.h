@@ -24,6 +24,7 @@ struct Vector3 final {
 	static Vector3 Normalize(const Vector3& v);
 
 	Vector3& operator+=(const Vector3& other);
+	Vector3& operator-=(const Vector3& other);
 };
 
 static const int kColumWidth = 60;

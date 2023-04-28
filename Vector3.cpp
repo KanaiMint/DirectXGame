@@ -61,6 +61,13 @@ Vector3& Vector3::operator+=(const Vector3& other) {
 	this->z += other.z;
 	return *this;
 }
+Vector3& Vector3::operator-=(const Vector3& other) {
+	// TODO: return ステートメントをここに挿入します
+	this->x -= other.x;
+	this->y -= other.y;
+	this->z -= other.z;
+	return *this;
+}
 
 
 
