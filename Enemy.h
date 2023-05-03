@@ -1,6 +1,7 @@
 #pragma once
 #include"Model.h"
 #include"WorldTransform.h"
+#include"EnemyBullet.h"
 class Enemy {
 private:
 	WorldTransform worldTransform_;
@@ -13,11 +14,18 @@ private:
 	};
 
 	Phese phese_ = Phese::Approach;
-	 Vector3 MoveSpeed = {0, 0, 0.7f};
-	
+	 Vector3 MoveSpeed = {0, 0, 0.1f};
+	// 敵弾
+	std::list<EnemyBullet*> bullets_;
+	 const uint32_t kbullets_Interval = 60;
+	uint32_t bullets_cooltime = kbullets_Interval;
+
 public:
+	 ~Enemy();
 	void Initialize(Model* model);
 	void Update();
 	void Approach();
 	void Draw(ViewProjection viewProjection);
+	void Fire();
+	void ApproachInitialize();
 };

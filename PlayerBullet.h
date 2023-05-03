@@ -10,7 +10,7 @@ class PlayerBullet {
 	Model* model_=nullptr;
 	uint32_t textureHandle_=0u;
 	//速度
-	Vector3 velocity_;
+	Vector3 velocity_ = {};
 	//寿命
 	static const int32_t kLifeTime = 60 * 5;
 	//ですタイマー

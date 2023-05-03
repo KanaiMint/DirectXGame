@@ -1,18 +1,42 @@
 #include "Enemy.h"
 
-void Enemy::Initialize(Model* model) 
-{ 
-	textureHandle_ = TextureManager::Load("black.jpeg");
+Enemy::~Enemy() {
+
+	for (EnemyBullet* bullet : bullets_) {
+		delete bullet;
+	}
+
+}
+
+void Enemy::Initialize(Model* model) { 
+	textureHandle_ = TextureManager::Load("kuppa.jpg");
 	model_ = model;
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = {0, 2, 10};
+	worldTransform_.translation_ = {10, 2, 10};
+	bullets_cooltime = 60;
+	/*for (EnemyBullet* bullet : bullets_) {
+
+		bullet->Initialize(model, worldTransform_.translation_, {});
+	}*/
+	ApproachInitialize();
 }     
 
 
 void Enemy::Update() 
 { 
+	//ですフラグの立った球の削除
+	bullets_.remove_if([](EnemyBullet* bullet) {
+		if (bullet->IsDead() == true) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
 	worldTransform_.UpdateMatrix();
+	for (EnemyBullet* bullet : bullets_) {
 	
+		bullet->Update();
+	}
 	switch (phese_) {
 		case Phese::Approach:
 	default:
@@ -24,11 +48,19 @@ void Enemy::Update()
 		worldTransform_.translation_ += {0.2f, 0.15f, 0.0f};
 		break;
 	}
+	
 }
 
 void Enemy::Approach() {
 	    // 移動（ヴェクトルを加算）
 	    worldTransform_.translation_ -= MoveSpeed;
+		//弾県警
+	bullets_cooltime--;
+	if (bullets_cooltime == 0) {
+		Fire();
+		bullets_cooltime = kbullets_Interval;
+	}
+
 	    // 規定の位置に達したら離脱
 	    if (worldTransform_.translation_.z < -30.0f) {
 		phese_ = Phese::Leave;
@@ -38,4 +70,23 @@ void Enemy::Approach() {
 void Enemy::Draw(ViewProjection viewProjection) 
 { 
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	    // 敵弾描画
+	    for (EnemyBullet* bullet : bullets_) {
+			bullet->Draw(viewProjection);
+	    }
 }
+
+void Enemy::Fire() 
+{
+	//弾の速度
+	    const float kEnemyBulletSpeed = -0.5f;
+	    Vector3 velocity(0, 0, kEnemyBulletSpeed);
+
+		//弾の生成、初期化
+	EnemyBullet* newBullet = new EnemyBullet();
+	    newBullet->Initialize(model_, worldTransform_.translation_,velocity);
+
+		bullets_.push_back(newBullet);
+}
+
+void Enemy::ApproachInitialize() { bullets_cooltime = kbullets_Interval; }
