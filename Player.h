@@ -41,4 +41,5 @@ private:
 		void Draw(ViewProjection viewProjection);
 
 		void Attack();
+	    Vector3 GetWorldPosition();
 };

@@ -12,7 +12,7 @@ void Enemy::Initialize(Model* model) {
 	textureHandle_ = TextureManager::Load("kuppa.jpg");
 	model_ = model;
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = {10, 2, 10};
+	worldTransform_.translation_ = {10, 2, 30};
 	bullets_cooltime = 60;
 	/*for (EnemyBullet* bullet : bullets_) {
 
@@ -79,8 +79,17 @@ void Enemy::Draw(ViewProjection viewProjection)
 void Enemy::Fire() 
 {
 	//弾の速度
-	    const float kEnemyBulletSpeed = -0.5f;
-	    Vector3 velocity(0, 0, kEnemyBulletSpeed);
+	    const float kEnemyBulletSpeed = 1.0f;
+	   // Vector3 velocity(0, 0, kEnemyBulletSpeed);
+	    Vector3 PlayerPos = player_->GetWorldPosition();
+	    Vector3 EnemyPos = GetWorldPosition();
+	    Vector3 PEVec = (PlayerPos - EnemyPos);
+	    Vector3 velocity = Vector3::Normalize(PEVec);
+	    velocity.Length({
+	        kEnemyBulletSpeed,
+	        kEnemyBulletSpeed,
+	        kEnemyBulletSpeed
+	    });
 
 		//弾の生成、初期化
 	EnemyBullet* newBullet = new EnemyBullet();
@@ -90,3 +99,10 @@ void Enemy::Fire()
 }
 
 void Enemy::ApproachInitialize() { bullets_cooltime = kbullets_Interval; }
+
+Vector3 Enemy::GetWorldPosition() { 
+	Vector3 worldPos;
+	    worldPos = worldTransform_.translation_;
+	
+	return Vector3(worldPos);
+}

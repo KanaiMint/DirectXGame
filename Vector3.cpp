@@ -69,5 +69,55 @@ Vector3& Vector3::operator-=(const Vector3& other) {
 	return *this;
 }
 
+Vector3 Vector3::operator-(const Vector3& other) {
+	// TODO: return ステートメントをここに挿入します
+	Vector3 tmp;
+	tmp.x = this->x - other.x;
+	tmp.y = this->y - other.y;
+	tmp.z = this->z - other.z;
+	return tmp;
+}
+
+Vector3 Vector3::operator+(const Vector3& other) { 
+	// TODO: return ステートメントをここに挿入します
+	Vector3 tmp;
+	tmp.x = this->x + other.x;
+	tmp.y = this->y + other.y;
+	tmp.z = this->z + other.z;
+	return tmp;
+	}
+
+Vector3 Vector3::operator*(float other)const {
+	Vector3 tmp;
+	tmp.x = this->x * other;
+	tmp.y = this->y * other;
+	tmp.z = this->z * other;
+	return tmp;
+	
+}
+
+Vector3 Vector3::operator/(float other)const {
+	// TODO: return ステートメントをここに挿入します
+	Vector3 tmp;
+	tmp.x = this->x / other;
+	tmp.y = this->y / other;
+	tmp.z = this->z / other;
+	return tmp;
+}
 
 
+Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t) { 
+	
+	Vector3 tmp;
+	tmp = {v1};//できてない
+	t;
+	return Vector3(v2);
+}
+
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {
+
+	Vector3 tmp;
+	tmp =Vector3::Add(v1, Vector3::Multiply(t,(Vector3::Subtract(v2,v1))));
+
+	return tmp;
+}

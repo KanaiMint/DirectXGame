@@ -25,8 +25,14 @@ struct Vector3 final {
 
 	Vector3& operator+=(const Vector3& other);
 	Vector3& operator-=(const Vector3& other);
+	Vector3 operator-(const Vector3& other);
+	Vector3 operator+(const Vector3& other);
+	Vector3 operator*(float other)const;
+	Vector3 operator/(float other)const;
 };
 
 static const int kColumWidth = 60;
+Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 
  

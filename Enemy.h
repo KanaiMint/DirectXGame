@@ -2,6 +2,7 @@
 #include"Model.h"
 #include"WorldTransform.h"
 #include"EnemyBullet.h"
+#include"Player.h"
 class Enemy {
 private:
 	WorldTransform worldTransform_;
@@ -19,8 +20,9 @@ private:
 	std::list<EnemyBullet*> bullets_;
 	 const uint32_t kbullets_Interval = 60;
 	uint32_t bullets_cooltime = kbullets_Interval;
+	 Player* player_ = nullptr;
 
-public:
+ public:
 	 ~Enemy();
 	void Initialize(Model* model);
 	void Update();
@@ -28,4 +30,7 @@ public:
 	void Draw(ViewProjection viewProjection);
 	void Fire();
 	void ApproachInitialize();
+	void SetPlayer(Player* player) { player_ = player; }
+	Vector3 GetWorldPosition();
+
 };

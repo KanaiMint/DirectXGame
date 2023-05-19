@@ -10,7 +10,7 @@ class EnemyBullet {
 	    uint32_t textureHandle_ = 0u;
 	    static const int32_t killTimer = 60 * 5;
 	    uint32_t deathTimer=killTimer;
-	    Vector3 velocity_;
+	    Vector3 velocity_ = {};
 	    bool isDead_ = false;
 	
 	public:
