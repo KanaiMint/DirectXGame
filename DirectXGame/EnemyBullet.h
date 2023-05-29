@@ -2,6 +2,7 @@
 #include"Model.h"
 #include"WorldTransform.h"
 #include<list>
+#include"Player.h"
 class EnemyBullet {
 	private:
 
@@ -12,6 +13,7 @@ class EnemyBullet {
 	    uint32_t deathTimer=killTimer;
 	    Vector3 velocity_ = {};
 	    bool isDead_ = false;
+	    Player *player_;
 	
 	public:
 	    ~EnemyBullet();
@@ -20,7 +22,7 @@ class EnemyBullet {
 		void Update();
 	    void Draw(ViewProjection& viewProjevtion);
 	    inline bool IsDead() const { return isDead_; }
-
+	    void SetPlayer(Player* player) { player_ = player; }
 
 
 };

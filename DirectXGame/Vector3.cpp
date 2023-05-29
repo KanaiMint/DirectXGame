@@ -107,11 +107,25 @@ Vector3 Vector3::operator/(float other)const {
 
 
 Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t) { 
-	
-	Vector3 tmp;
-	tmp = {v1};//できてない
-	t;
-	return Vector3(v2);
+	Vector3 nv1 = Vector3::Normalize(v1);
+	Vector3 nv2 = Vector3::Normalize(v2);
+	//Vector3 tmp;
+	//ベクトル間の角度（鋭角）
+	float dot = Vector3::Dot(nv1, nv2);
+	if (std::abs(dot) > 0.999f) {
+		return Lerp(v1, v2, t);
+	}
+
+	float angle = std::acos(dot);
+	//sin
+	float SinTh = std::sinf(angle);
+	//補間係数
+	float Ps = std::sinf(angle * (1 - t));
+	float Pe = std::sinf(angle * t);
+	Vector3 result = (Vector3::Multiply(Ps, nv1) +
+	                 Vector3::Multiply(Pe, nv2)) / SinTh;
+	return Vector3::Normalize(result);
+ 	
 }
 
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {

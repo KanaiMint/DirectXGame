@@ -11,7 +11,7 @@ EnemyBullet::~EnemyBullet() {}
 		worldTransform_.translation_ = position;
 	    worldTransform_.scale_ = {0.5f, 0.5f, 3.0f};
 	    velocity_ = vel;
-
+	   
 
 	    worldTransform_.rotation_.x =
 	        std::atan2(-velocity_.y, Vector3::Length({velocity_.x, 0.0f, velocity_.z}));
@@ -23,12 +23,32 @@ EnemyBullet::~EnemyBullet() {}
 
 	void EnemyBullet::Update() {
 
-		worldTransform_.UpdateMatrix(); 
 		//worldTransform_.translation_ += velocity_;
+		//敵弾からジキャラへのベクトルを計算
+	    Vector3 toPlayer = player_->GetWorldPosition() - worldTransform_.translation_;	   
+		//球面線形補間により、今の速度とジキャラのベクトルを内挿し、新たな速度とする
+	    velocity_ = Slerp(velocity_, toPlayer, 0.05f) * 0.5f;
+
+	    worldTransform_.rotation_.x =
+	        std::atan2(-velocity_.y, Vector3::Length({velocity_.x, 0.0f, velocity_.z}));
+	    worldTransform_.rotation_.y =
+	        std::atan2(velocity_.x / velocity_.z, Vector3::Length({velocity_}));
+
 	    worldTransform_.translation_ += velocity_;
+		worldTransform_.UpdateMatrix(); 
+
 	    if (--deathTimer == 0) {
 		    isDead_ = true;
 		}
+
+		ImGui::Begin("window");
+	    // デバックテキスト表示
+	    ImGui::Text(
+	        "EnemyBullet %f,%f,%f", worldTransform_.translation_.x, worldTransform_.translation_.y,
+	        worldTransform_.translation_.z);
+	    // ImGui::InputFloat3("Player", Inputfloat3);
+	    // ImGui::SliderFloat3("Player", Inputfloat3,0.0f,1.0f);
+	    ImGui::End();
 	}
 
 	void EnemyBullet::Draw(ViewProjection & viewProjevtion) {
