@@ -23,7 +23,7 @@ private:
 
 	//弾
 	std::list<PlayerBullet*> bullets_;
-
+	float Radius=5.0f;
 	public:
 		/// <summary>
 		/// 
@@ -42,4 +42,9 @@ private:
 
 		void Attack();
 	    Vector3 GetWorldPosition();
+	    float GetRadius() { return Radius; }
+
+		void OnCollision();
+	    const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
+
 };

@@ -14,7 +14,7 @@ class EnemyBullet {
 	    Vector3 velocity_ = {};
 	    bool isDead_ = false;
 	    Player *player_;
-	
+	    float Radius = 1.0f;
 	public:
 	    ~EnemyBullet();
 
@@ -23,6 +23,10 @@ class EnemyBullet {
 	    void Draw(ViewProjection& viewProjevtion);
 	    inline bool IsDead() const { return isDead_; }
 	    void SetPlayer(Player* player) { player_ = player; }
+	    void OnCollision();
+	    Vector3 GetWorldPosition();
+	    float GetRadius() { return Radius; }
+
 
 
 };

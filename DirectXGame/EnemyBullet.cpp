@@ -11,7 +11,7 @@ EnemyBullet::~EnemyBullet() {}
 		worldTransform_.translation_ = position;
 	    worldTransform_.scale_ = {0.5f, 0.5f, 3.0f};
 	    velocity_ = vel;
-	   
+		worldTransform_.UpdateMatrix(); 
 
 	    worldTransform_.rotation_.x =
 	        std::atan2(-velocity_.y, Vector3::Length({velocity_.x, 0.0f, velocity_.z}));
@@ -27,12 +27,14 @@ EnemyBullet::~EnemyBullet() {}
 		//敵弾からジキャラへのベクトルを計算
 	    Vector3 toPlayer = player_->GetWorldPosition() - worldTransform_.translation_;	   
 		//球面線形補間により、今の速度とジキャラのベクトルを内挿し、新たな速度とする
-	    velocity_ = Slerp(velocity_, toPlayer, 0.05f) * 0.5f;
+	    velocity_ = Slerp(velocity_, toPlayer, 0.03f) * 0.5f;
 
-	    worldTransform_.rotation_.x =
-	        std::atan2(-velocity_.y, Vector3::Length({velocity_.x, 0.0f, velocity_.z}));
 	    worldTransform_.rotation_.y =
-	        std::atan2(velocity_.x / velocity_.z, Vector3::Length({velocity_}));
+	        std::atan2(velocity_.x,velocity_.z );
+	    Matrix4x4 tmp = MakeRotateYMatrix(-std::atan2(velocity_.x, velocity_.z));
+	    Vector3 velZ = Transform(velocity_,tmp);
+
+	    worldTransform_.rotation_.x = std::atan2(-velZ.y,velZ.z);
 
 	    worldTransform_.translation_ += velocity_;
 		worldTransform_.UpdateMatrix(); 
@@ -55,3 +57,7 @@ EnemyBullet::~EnemyBullet() {}
 		model_->Draw(worldTransform_, viewProjevtion,textureHandle_);
 		
 	}
+
+    void EnemyBullet::OnCollision() { isDead_ = true; }
+
+    Vector3 EnemyBullet::GetWorldPosition() { return Vector3(worldTransform_.translation_); }

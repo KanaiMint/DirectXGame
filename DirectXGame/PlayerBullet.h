@@ -17,7 +17,7 @@ class PlayerBullet {
 	int32_t deathTimer_ = kLifeTime;
 	//ですフラグ
 	bool isDead_ = false;
-	
+	float Radius = 1.0f;
 
 public:
 	/// <summary>
@@ -36,6 +36,7 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション</param>
 	void Draw(const ViewProjection& viewProjection);
 	inline bool IsDead() const { return isDead_; }
-	
-
+	void OnCollision();
+	Vector3 GetWorldPosition() { return worldTransform_.translation_; }
+	float GetRadius() { return Radius; }
 };

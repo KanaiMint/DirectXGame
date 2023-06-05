@@ -15,7 +15,7 @@ private:
 	};
 
 	Phese phese_ = Phese::Approach;
-	 Vector3 MoveSpeed = {0, 0, 0.1f};
+	 Vector3 MoveSpeed = {0, 0, 0.01f};
 	// 敵弾
 	std::list<EnemyBullet*> bullets_;
 	 const uint32_t kbullets_Interval = 60;
@@ -32,5 +32,6 @@ private:
 	void ApproachInitialize();
 	void SetPlayer(Player* player) { player_ = player; }
 	Vector3 GetWorldPosition();
-
+	void OnCollision();
+	const std::list<EnemyBullet*>& GetBullets() { return bullets_; }
 };

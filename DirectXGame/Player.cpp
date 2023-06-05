@@ -135,6 +135,8 @@ Vector3 Player::GetWorldPosition() {
 	return Vector3(worldPos);
 }
 
+void Player::OnCollision() {}
+
 void Player::CharaMove(Vector3& move, const float& kCharacterSpeed) {
 	if (input_->PushKey(DIK_LEFT)) {
 		move.x -= kCharacterSpeed;
