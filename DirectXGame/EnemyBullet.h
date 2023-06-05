@@ -3,7 +3,8 @@
 #include"WorldTransform.h"
 #include<list>
 #include"Player.h"
-class EnemyBullet {
+#include"Collider.h"
+class EnemyBullet :public Collider{
 	private:
 
 		WorldTransform worldTransform_;
@@ -23,8 +24,8 @@ class EnemyBullet {
 	    void Draw(ViewProjection& viewProjevtion);
 	    inline bool IsDead() const { return isDead_; }
 	    void SetPlayer(Player* player) { player_ = player; }
-	    void OnCollision();
-	    Vector3 GetWorldPosition();
+	    void OnCollision()override;
+	    Vector3 GetWorldPosition()override;
 	    float GetRadius() { return Radius; }
 
 

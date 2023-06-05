@@ -6,7 +6,8 @@
 #include"ImGuiManager.h"
 #include"PlayerBullet.h"
 #include <list>
-class Player {
+#include"Collider.h"
+class Player :public Collider {
 private:
 	//ワールド返還データ
 	WorldTransform worldTransform_;
@@ -41,10 +42,11 @@ private:
 		void Draw(ViewProjection viewProjection);
 
 		void Attack();
-	    Vector3 GetWorldPosition();
+	    Vector3 GetWorldPosition() override;
 	    float GetRadius() { return Radius; }
 
-		void OnCollision();
+		void OnCollision()override;
 	    const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
+
 
 };

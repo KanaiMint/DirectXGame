@@ -3,7 +3,8 @@
 #include"WorldTransform.h"
 #include"EnemyBullet.h"
 #include"Player.h"
-class Enemy {
+#include"Collider.h"
+class Enemy :public Collider{
 private:
 	WorldTransform worldTransform_;
 	Model* model_=nullptr;
@@ -31,7 +32,7 @@ private:
 	void Fire();
 	void ApproachInitialize();
 	void SetPlayer(Player* player) { player_ = player; }
-	Vector3 GetWorldPosition();
-	void OnCollision();
+	Vector3 GetWorldPosition()override;
+	void OnCollision()override;
 	const std::list<EnemyBullet*>& GetBullets() { return bullets_; }
 };

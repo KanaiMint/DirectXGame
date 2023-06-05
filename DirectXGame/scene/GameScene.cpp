@@ -127,43 +127,45 @@ void GameScene::Draw() {
 void GameScene::CheckAllCollision() 
 {
 	//判定対象AとBの座標
-	Vector3 posA, posB;
+//	Vector3 posA, posB;
 	//自弾リストの取得
 	const std::list<PlayerBullet*> playerBullets = player_->GetBullets();
 	//敵弾リストの取得
 	const std::list<EnemyBullet*> enemyBullets = enemy_->GetBullets();
 
 	#pragma region ジキャラと敵弾の当たり判定
-	//ジキャラの座標
-	posA = player_->GetWorldPosition();
+	////ジキャラの座標
+	//posA = player_->GetWorldPosition();
 	//ジキャラと敵弾すべての当たり判定
 	for (EnemyBullet* bullet : enemyBullets) {
 	
-		posB = bullet->GetWorldPosition();
+		/*posB = bullet->GetWorldPosition();
 		float distance =
 		    std::powf(posB.x - posA.x,2.0f) + std::powf(posB.y - posA.y,2.0f) + std::powf(posB.z - posA.z,2.0f);
 
 		if (distance <= std::powf(player_->GetRadius() + bullet->GetRadius(),2.0f)) {
 			player_->OnCollision();
 			bullet->OnCollision();
-		}
+		}*/
+		CheckCollisionPair(player_, bullet);
 	}
 	#pragma endregion
 
 	#pragma region ジtamaと敵キャラの当たり判定
 	// 敵キャラの座標
-	posA = enemy_->GetWorldPosition();
+	//posA = enemy_->GetWorldPosition();
 	// 敵キャラと自弾すべての当たり判定
 	for (PlayerBullet* bullet : playerBullets) {
 
-		posB = bullet->GetWorldPosition();
+		/*posB = bullet->GetWorldPosition();
 		float distance = std::powf(posB.x - posA.x, 2.0f) + std::powf(posB.y - posA.y, 2.0f) +
 		                 std::powf(posB.z - posA.z, 2.0f);
 
 		if (distance <= std::powf(player_->GetRadius() + bullet->GetRadius(), 2.0f)) {
 			enemy_->OnCollision();
 			bullet->OnCollision();
-		}
+		}*/
+		CheckCollisionPair(enemy_, bullet);
 	}
 	#pragma endregion
 
@@ -171,7 +173,7 @@ void GameScene::CheckAllCollision()
 	// 敵弾と自弾すべての当たり判定
 	for (PlayerBullet* pbullet : playerBullets) {
 		for (EnemyBullet* ebullet : enemyBullets) {
-			posA = pbullet->GetWorldPosition();
+			/*posA = pbullet->GetWorldPosition();
 			posB = ebullet->GetWorldPosition();
 			float distance = std::powf(posB.x - posA.x, 2.0f) + std::powf(posB.y - posA.y, 2.0f) +
 			                 std::powf(posB.z - posA.z, 2.0f);
@@ -179,8 +181,24 @@ void GameScene::CheckAllCollision()
 			if (distance <= std::powf(pbullet->GetRadius() + ebullet->GetRadius(), 2.0f)) {
 				pbullet->OnCollision();
 				ebullet->OnCollision();
-			}
+			}*/
+			CheckCollisionPair(pbullet, ebullet);
 		}
 	}
 	#pragma endregion
+}
+
+void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
+
+	// 判定対象AとBの座標
+	Vector3 posA{}, posB{};
+
+	posA=colliderA->GetWorldPosition();
+	posB=colliderB->GetWorldPosition();
+	float distance = std::pow(posB.x - posA.x, 2.0f) + std::powf(posB.y - posA.y, 2.0f) +
+	                 std::pow(posB.z - posA.z, 2.0f);
+	if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
+		colliderA->OnCollision();
+		colliderB->OnCollision();
+	}
 }

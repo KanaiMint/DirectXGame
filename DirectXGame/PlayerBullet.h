@@ -1,10 +1,11 @@
 #pragma once
 #include"Model.h"
+#include"Collider.h"
 #include"WorldTransform.h"
 /// <summary>
 /// ジキャラの弾
 /// </summary>
-class PlayerBullet {
+class PlayerBullet :public Collider{
 	private:
 	WorldTransform worldTransform_;
 	Model* model_=nullptr;
@@ -36,7 +37,7 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション</param>
 	void Draw(const ViewProjection& viewProjection);
 	inline bool IsDead() const { return isDead_; }
-	void OnCollision();
-	Vector3 GetWorldPosition() { return worldTransform_.translation_; }
+	void OnCollision()override;
+	Vector3 GetWorldPosition()override { return worldTransform_.translation_; }
 	float GetRadius() { return Radius; }
 };
