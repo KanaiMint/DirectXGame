@@ -12,6 +12,10 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	//因数で受け取った初期座標をセット	
 	worldTransform_.translation_ = position;
 	velocity_ = velocity;
+	// 衝突判定を設定
+	SetcollisionAttribute(kCollisionAttributePlayer);
+	// 衝突対象を自分の属性以外に設定
+	SetcollisionMask(~kCollisionAttributePlayer);
 }
 
 void PlayerBullet::Update() 

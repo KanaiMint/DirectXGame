@@ -7,6 +7,7 @@
 #include"PlayerBullet.h"
 #include <list>
 #include"Collider.h"
+
 class Player :public Collider {
 private:
 	//ワールド返還データ

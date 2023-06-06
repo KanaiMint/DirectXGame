@@ -19,6 +19,13 @@ void Enemy::Initialize(Model* model) {
 		bullet->Initialize(model, worldTransform_.translation_, {});
 	}*/
 	ApproachInitialize();
+
+	// 衝突判定を設定
+	SetcollisionAttribute(kCollisionAttributeEnemy);
+	// 衝突対象を自分の属性以外に設定
+	uint32_t test = ~kCollisionAttributeEnemy;
+	(void)test;
+	SetcollisionMask(~kCollisionAttributeEnemy);
 }     
 
 

@@ -19,6 +19,10 @@ EnemyBullet::~EnemyBullet() {}
 	    worldTransform_.rotation_.y =
 	        std::atan2( velocity_.x/velocity_.z,Vector3::Length({velocity_}));
 		//あ
+	    //  衝突判定を設定
+	    SetcollisionAttribute(kCollisionAttributeEnemy);
+	    // 衝突対象を自分の属性以外に設定
+	    SetcollisionMask(~kCollisionAttributeEnemy);
 	}
 
 	void EnemyBullet::Update() {

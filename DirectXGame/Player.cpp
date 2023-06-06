@@ -12,7 +12,10 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	this->worldTransform_.Initialize();
 
 	input_ = Input::GetInstance();
-
+	//衝突判定を設定
+	SetcollisionAttribute(kCollisionAttributePlayer);
+	//衝突対象を自分の属性以外に設定
+	SetcollisionMask(~kCollisionAttributePlayer);
 	
 }
 
