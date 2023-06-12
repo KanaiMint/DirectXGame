@@ -32,7 +32,10 @@ void GameScene::Initialize() {
 	enemy_->Initialize(model_);
 	//敵キャラにジキャラのアドレスを渡す
 	enemy_->SetPlayer(player_);
-	
+	//コリジョンマネージャー
+	collisionmanager_ = new CollisionManager();
+	//コリジョンマネージャーの初期化
+	collisionmanager_->Initialize(player_, enemy_);
 	//デバックカメラの生成
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
 	//軸方向表示の表示を有効にする
@@ -50,7 +53,8 @@ void GameScene::Update() {
 	enemy_->Update();
 
 	//当たり判定
-	CheckAllCollision();
+	//CheckAllCollision();
+	collisionmanager_->Update(player_,enemy_);
 
 	//デバックカメラの更新
 	debugCamera_->Update();
