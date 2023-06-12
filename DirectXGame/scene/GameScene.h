@@ -12,6 +12,7 @@
 #include "Enemy.h"
 #include"DebugCamera.h"
 #include"CollisionManager.h"
+#include"Skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -58,7 +59,10 @@ private: // メンバ変数
 	Player* player_ = nullptr;
 	// 敵キャラ 
 	Enemy* enemy_ = nullptr;
-
+	//天球
+	Skydome* skydome_ = nullptr;
+	//天球3Dモデル
+	Model* modelSkydome_ = nullptr;
 	//コライダーマネージャー
 	CollisionManager* collisionmanager_;
 	/// <summary>

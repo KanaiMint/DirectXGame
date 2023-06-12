@@ -10,6 +10,8 @@ GameScene::~GameScene() {
 	delete player_;
 	delete debugCamera_;
 	delete enemy_;
+	delete collisionmanager_;
+	delete modelSkydome_;
 }
 
 void GameScene::Initialize() {
@@ -43,10 +45,17 @@ void GameScene::Initialize() {
 	//軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
-
+	//3Dモデルの生成
+	modelSkydome_ = Model::CreateFromOBJ("sora", true);
+	//天球初期化
+	skydome_ = new Skydome();
+	skydome_->Initialize(modelSkydome_);
 }
 
 void GameScene::Update() {
+	//天球更新
+	skydome_->Update();
+
 //ジキャラの更新
 	player_->Update();
 	//敵の更新
@@ -105,7 +114,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-
+	//天球描画
+	skydome_->Draw(viewProjection_);
 	//自キャラの描画
 	player_->Draw(viewProjection_);
 	//敵キャラの描画
