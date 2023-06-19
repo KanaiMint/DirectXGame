@@ -27,7 +27,8 @@ void GameScene::Initialize() {
 	//ジキャラ作成
 	player_ = new Player();
 	//ジキャラの初期化
-	player_->Initialize(model_,textureHandle_);
+	Vector3 playerpos = {0, 0, 50.0f};
+	player_->Initialize(model_, textureHandle_,playerpos) ;
 	//エネミー作成
 	enemy_ = new Enemy();
 	//エネミーの初期ka
@@ -50,6 +51,11 @@ void GameScene::Initialize() {
 	//天球初期化
 	skydome_ = new Skydome();
 	skydome_->Initialize(modelSkydome_);
+	//レールカメラ初期化
+	railCamera_ = new RailCamera();
+	railCamera_->Initialize(viewProjection_.translation_, {0.0f, 0.0f, 0.0f});
+	//ジキャラとレールカメラの親子関係を結ぶ
+	player_->SetParent(&railCamera_->GetWorldTransform());
 }
 
 void GameScene::Update() {
@@ -65,6 +71,12 @@ void GameScene::Update() {
 	//CheckAllCollision();
 	collisionmanager_->Update(player_,enemy_);
 
+	//レールカメラの更新
+	railCamera_->Update();
+	viewProjection_.matView = railCamera_->GetViewProjection().matView;
+	viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+	viewProjection_.TransferMatrix();
+
 	//デバックカメラの更新
 	debugCamera_->Update();
 	if (isDebugCameraActive_ == true) {
@@ -74,7 +86,7 @@ void GameScene::Update() {
 		viewProjection_.TransferMatrix();
 	} else {
 		//ビュープロジェクション行列の更新と転送
-		viewProjection_.UpdateMatrix();
+		//viewProjection_.UpdateMatrix();
 	}
 	#ifdef _DEBUG
 	if (input_->TriggerKey(DIK_C)) {

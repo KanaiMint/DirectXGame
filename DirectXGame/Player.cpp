@@ -2,7 +2,7 @@
 #include "cassert"
 
 
-void Player::Initialize(Model* model, uint32_t textureHandle) {
+void Player::Initialize(Model* model, uint32_t textureHandle,Vector3 playerpos) {
 //NULLポインタチェック
 	assert(model);
 	//初期化各々
@@ -10,7 +10,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	this->textureHandle_ = textureHandle;
 
 	this->worldTransform_.Initialize();
-
+	this->worldTransform_.translation_ = playerpos;
 	input_ = Input::GetInstance();
 	//衝突判定を設定
 	SetcollisionAttribute(kCollisionAttributePlayer);
@@ -36,8 +36,7 @@ void Player::Update() {
 		return false;
 	});
 
-//行列をバッファに転送
-	worldTransform_.TransferMatrix();
+
 	//キャラの移動ベクトル
 	Vector3 move = {0, 0, 0};
 	//kyらの移動の速さ
@@ -45,7 +44,11 @@ void Player::Update() {
 
 	CharaMove(move, kCharacterSpeed);//キャラクター移動処理
 	CharaRotate();//キャラクター旋回処理
+	worldTransform_.UpdateMatrix();
+
 	Attack();//キャラクター攻撃処理
+	// 行列をバッファに転送
+	//worldTransform_.TransferMatrix();
 
 	//弾の更新
 	for (PlayerBullet* bullet : bullets_) {
@@ -119,8 +122,8 @@ void Player::Attack()
 	//速度ベクトルヲ自機の向きに合わせて回転させる
 	velocity = TransformNormal(velocity, worldTransform_.matWorld_);
 	//弾を生成し、初期化
-		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_,velocity);
+	PlayerBullet* newBullet = new PlayerBullet();
+	newBullet->Initialize(model_, GetWorldPosition(), velocity);
 	
 	//弾を登録する
 		bullets_.push_back(newBullet);
@@ -130,15 +133,22 @@ void Player::Attack()
 
 Vector3 Player::GetWorldPosition() { 
 	Vector3 worldPos;
+	//worldTransform_.UpdateMatrix();
 	//ワールド行列の平行移動成分を取得（ワールド座標)
-	worldPos.x = worldTransform_.translation_.x;
-	worldPos.y = worldTransform_.translation_.y;
-	worldPos.z = worldTransform_.translation_.z;
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
 	
 	return Vector3(worldPos);
 }
 
 void Player::OnCollision() {}
+
+void Player::SetParent(const WorldTransform* parent) 
+{
+	//親子関係を結ぶ
+	worldTransform_.parent_ = parent;
+}
 
 void Player::CharaMove(Vector3& move, const float& kCharacterSpeed) {
 	if (input_->PushKey(DIK_LEFT)) {

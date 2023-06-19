@@ -13,6 +13,7 @@
 #include"DebugCamera.h"
 #include"CollisionManager.h"
 #include"Skydome.h"
+#include"RailCamera.h"
 
 /// <summary>
 /// ゲームシーン
@@ -65,6 +66,8 @@ private: // メンバ変数
 	Model* modelSkydome_ = nullptr;
 	//コライダーマネージャー
 	CollisionManager* collisionmanager_;
+	//レールカメラ
+	RailCamera* railCamera_;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

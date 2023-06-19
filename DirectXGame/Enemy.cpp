@@ -109,8 +109,11 @@ void Enemy::ApproachInitialize() { bullets_cooltime = kbullets_Interval; }
 
 Vector3 Enemy::GetWorldPosition() { 
 	Vector3 worldPos;
-	    worldPos = worldTransform_.translation_;
-	
+	    // ワールド行列の平行移動成分を取得（ワールド座標)
+	    worldPos.x = worldTransform_.matWorld_.m[3][0];
+	    worldPos.y = worldTransform_.matWorld_.m[3][1];
+	    worldPos.z = worldTransform_.matWorld_.m[3][2];
+	   
 	return Vector3(worldPos);
 }
 

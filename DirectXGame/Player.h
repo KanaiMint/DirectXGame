@@ -32,7 +32,7 @@ private:
 		/// </summary>
 		/// <param name="model">モデル</param>
 		/// <param name="textureHandle">テクスチャハンドル</param>
-		void Initialize(Model* model,uint32_t textureHandle );
+	    void Initialize(Model* model, uint32_t textureHandle, Vector3 playerpos);
 	    ~Player();
 		void Update();
 
@@ -49,5 +49,5 @@ private:
 		void OnCollision()override;
 	    const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
 
-
+		void SetParent(const WorldTransform* parent);
 };
