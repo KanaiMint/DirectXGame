@@ -7,6 +7,7 @@
 GameScene::GameScene() {}
 
 GameScene::~GameScene() { 
+
 	delete model_; 
 	delete player_;
 	delete debugCamera_;
@@ -68,6 +69,8 @@ void GameScene::Initialize() {
 	//ジキャラとレールカメラの親子関係を結ぶ
 	player_->SetParent(&railCamera_->GetWorldTransform());
 	LoadEnemyPopData();
+	//レティクルのテクスチャ
+	TextureManager::Load("Reticle.png");
 }
 
 void GameScene::Update() {
@@ -75,7 +78,7 @@ void GameScene::Update() {
 	skydome_->Update();
 
 //ジキャラの更新
-	player_->Update();
+	player_->Update(viewProjection_);
 	//敵の更新
 	UpdateEnemyPopCommands();
 	for (Enemy* enemy : enemys_) {
@@ -185,7 +188,7 @@ void GameScene::Draw() {
 #pragma region 前景スプライト描画
 	// 前景スプライト描画前処理
 	Sprite::PreDraw(commandList);
-
+	player_->DrawUI();
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>

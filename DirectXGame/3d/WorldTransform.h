@@ -49,4 +49,10 @@ struct WorldTransform {
 	/// 行列を計算・転送する
 	/// </summary>
 	void UpdateMatrix();
+
+	Vector3 MatWorldPos() {
+		return Vector3(
+		   matWorld_.m[3][0], matWorld_.m[3][1],
+		   matWorld_.m[3][2]);
+	}
 };

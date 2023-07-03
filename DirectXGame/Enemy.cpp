@@ -85,7 +85,7 @@ void Enemy::Fire() {
 	// Vector3 velocity(0, 0, kEnemyBulletSpeed);
 	/*Vector3 PlayerPos = player_->GetWorldPosition();*/
 	Vector3 EnemyPos = GetWorldPosition();
-	Vector3 PEVec = (player_->GetWorldPosition() - EnemyPos);
+	Vector3 PEVec = (player_->MatWorldPlayerPos() - EnemyPos);
 	Vector3 velocity = Vector3::Normalize(PEVec);
 	velocity.Length({kEnemyBulletSpeed, kEnemyBulletSpeed, kEnemyBulletSpeed});
 
