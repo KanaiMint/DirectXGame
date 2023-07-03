@@ -63,6 +63,11 @@ private:
 	    WorldTransform worldTransform3DReticle_;
 
 		void Reticle(const ViewProjection& viewProjection);
+
+	   void ReticlePAD(const ViewProjection& viewProjection);
+
+		void ReticleMouse(const ViewProjection& viewProjection);
+
 	    Vector3 MatWorldPlayerPos() 
 		{
 		   /* Matrix4x4 Mat= Multiply(worldTransform_.matWorld_, worldTransform_.parent_->matWorld_);
