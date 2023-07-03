@@ -1,25 +1,28 @@
 #include "CollisionManager.h"
 
-void CollisionManager::Initialize(Player* player, Enemy* enemy) {
+void CollisionManager::Initialize(Player* player /*, Enemy* enemy*/) {
 
 	player_ = player;
-	enemy_ = enemy;
+	/*enemy_ = enemy;*/
 }
 
-void CollisionManager::Update(Player* player, Enemy* enemy) { 
-	player_ = player;
-	enemy_ = enemy;
-	CheckAllCollision();
+void CollisionManager::Update(
+    Player* player, std::list<Enemy*>& enemy, std::list<EnemyBullet*>& enemyBullets_) {
 	colliders_.clear();
+	player_ = player;
+	// enemy_ = enemy;
+	CheckAllCollision(enemy, enemyBullets_);
 }
 
-void CollisionManager::CheckAllCollision() {
+void CollisionManager::CheckAllCollision(
+    std::list<Enemy*>& enemys_, std::list<EnemyBullet*>& enemyBullets_) {
 	// 判定対象AとBの座標
 	//	Vector3 posA, posB;
 	// 自弾リストの取得
 	const std::list<PlayerBullet*> playerBullets = player_->GetBullets();
 	// 敵弾リストの取得
-	const std::list<EnemyBullet*> enemyBullets = enemy_->GetBullets();
+	const std::list<EnemyBullet*> enemyBullets = enemyBullets_;
+	// 敵リストの取得
 
 	// #pragma region ジキャラと敵弾の当たり判定
 	//////ジキャラの座標
@@ -30,7 +33,7 @@ void CollisionManager::CheckAllCollision() {
 	//	/*posB = bullet->GetWorldPosition();
 	//	float distance =
 	//	    std::powf(posB.x - posA.x,2.0f) + std::powf(posB.y - posA.y,2.0f) + std::powf(posB.z -
-	//posA.z,2.0f);
+	// posA.z,2.0f);
 
 	//	if (distance <= std::powf(player_->GetRadius() + bullet->GetRadius(),2.0f)) {
 	//		player_->OnCollision();
@@ -77,10 +80,12 @@ void CollisionManager::CheckAllCollision() {
 	// #pragma endregion
 
 	// コライダー
-	//std::list<Collider*> colliders_;
+	// std::list<Collider*> colliders_;
 	// コライダーをリストに登録
 	colliders_.push_back(player_);
-	colliders_.push_back(enemy_);
+	for (Enemy* enemy : enemys_) {
+		colliders_.push_back(enemy);
+	}
 	// 自弾すべてについて
 	for (PlayerBullet* pbullet : playerBullets) {
 		colliders_.push_back(pbullet);
@@ -106,8 +111,7 @@ void CollisionManager::CheckAllCollision() {
 	}
 }
 
-void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* colliderB) 
-{
+void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
 
 	// 衝突フィルタリング
 	// 一致しなかったら当たり判定をとらない
@@ -121,6 +125,7 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 
 	posA = colliderA->GetWorldPosition();
 	posB = colliderB->GetWorldPosition();
+
 	float distance = std::pow(posB.x - posA.x, 2.0f) + std::powf(posB.y - posA.y, 2.0f) +
 	                 std::pow(posB.z - posA.z, 2.0f);
 	if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {

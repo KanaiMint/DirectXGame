@@ -50,4 +50,6 @@ private:
 	    const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
 
 		void SetParent(const WorldTransform* parent);
+	    Matrix4x4 Getparent() { return worldTransform_.parent_->matWorld_; }
+	    Matrix4x4 GetMatworld() { return worldTransform_.matWorld_; }
 };

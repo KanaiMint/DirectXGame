@@ -29,7 +29,11 @@ EnemyBullet::~EnemyBullet() {}
 
 		//worldTransform_.translation_ += velocity_;
 		//敵弾からジキャラへのベクトルを計算
-	    Vector3 toPlayer = player_->GetWorldPosition() - worldTransform_.translation_;	   
+	    Matrix4x4 playercamerapos = Multiply( player_->GetMatworld() , player_->Getparent());
+		
+	    Vector3 toPlayer =
+	        Vector3(playercamerapos.m[3][0], playercamerapos.m[3][1], playercamerapos.m[3][2]) -
+	                       worldTransform_.translation_;	   
 		//球面線形補間により、今の速度とジキャラのベクトルを内挿し、新たな速度とする
 	    velocity_ = Slerp(velocity_, toPlayer, 0.03f) * 0.5f;
 

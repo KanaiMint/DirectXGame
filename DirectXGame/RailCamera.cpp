@@ -12,7 +12,7 @@ void RailCamera::Initialize(const Vector3 worldpos, Vector3 radian) {
 void RailCamera::Update() 
 { 
 	worldTransform_.translation_ += {0.0f,0.0f,-0.01f};
-	worldTransform_.rotation_ += {0.0f,0.01f,0.0f};
+	worldTransform_.rotation_ += {0.0f,0.0f,0.0f};
 	worldTransform_.matWorld_ = MakeAffineMatrix(
 	    worldTransform_.scale_,
 		worldTransform_.rotation_,
