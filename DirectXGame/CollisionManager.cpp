@@ -9,6 +9,8 @@ void CollisionManager::Initialize(Player* player /*, Enemy* enemy*/) {
 void CollisionManager::Update(
     Player* player, std::list<Enemy*>& enemy, std::list<EnemyBullet*>& enemyBullets_) {
 	colliders_.clear();
+	//playerBullets.clear();
+	//enemyBullets_.clear();
 	player_ = player;
 	// enemy_ = enemy;
 	CheckAllCollision(enemy, enemyBullets_);
@@ -19,9 +21,9 @@ void CollisionManager::CheckAllCollision(
 	// 判定対象AとBの座標
 	//	Vector3 posA, posB;
 	// 自弾リストの取得
-	const std::list<PlayerBullet*> playerBullets = player_->GetBullets();
+	playerBullets = player_->GetBullets();
 	// 敵弾リストの取得
-	const std::list<EnemyBullet*> enemyBullets = enemyBullets_;
+	enemyBullets = enemyBullets_;
 	// 敵リストの取得
 
 	// #pragma region ジキャラと敵弾の当たり判定
@@ -128,8 +130,32 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 
 	float distance = std::pow(posB.x - posA.x, 2.0f) + std::powf(posB.y - posA.y, 2.0f) +
 	                 std::pow(posB.z - posA.z, 2.0f);
-	if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
-		colliderA->OnCollision();
-		colliderB->OnCollision();
+	if (colliderA == player_ || colliderB == player_) {
+		if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
+			colliderA->OnCollision();
+			colliderB->OnCollision();
+		}
+	}
+	if (colliderA == enemy_ || colliderB == enemy_) {
+		if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
+			colliderA->OnCollision();
+			colliderB->OnCollision();
+		}
+	}
+	if (colliderA->GetMask() == Collider::Mask::enemybullet &&
+	    colliderB->GetMask() == Collider::Mask::playerbullet) {
+
+		if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
+			colliderA->OnCollision2();
+			colliderB->OnCollision2();
+		}
+	}
+	if (colliderB->GetMask() == Collider::Mask::enemybullet &&
+	    colliderA->GetMask() == Collider::Mask::playerbullet) {
+
+		if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
+			colliderA->OnCollision2();
+			colliderB->OnCollision2();
+		}
 	}
 }

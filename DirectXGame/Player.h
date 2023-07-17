@@ -18,6 +18,8 @@ private:
 	Model* Reticle_model_ = nullptr;
 	//2Dレティクル用スプライト
 	Sprite* sprite2DReticle_ = nullptr;
+	//上下どっちにいるか用スプライト
+	Sprite* sprite2DWindowHarf = nullptr;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
 	//キーボード入力
@@ -32,6 +34,17 @@ private:
 	float Radius=5.0f;
 	// 自機から3Dレティクルへの距離
 	const float kDistanceplayerTo3DReticle = 20.0f;
+
+	bool IsReflection = false;
+	int ReflectTime = 0;
+	int ReflectCoolTime = 120;
+	const int kMaxReflectCoolTime = 120;
+	
+	float ReflectRotateSpeed = 0.5f;
+	const int kMaxReflectTime = 60;
+	int AttackTime = 0;
+	const int KAttackTimeParsent = 20;//発射感覚
+	bool IsWindowUp = false;
 
 	public:
 		/// <summary>
@@ -49,10 +62,11 @@ private:
 
 		void Draw(ViewProjection viewProjection);
 	    void DrawUI();
-		void Attack();
+	    void DrawHarf();
+	    void Attack(ViewProjection viewProjection);
 	    Vector3 GetWorldPosition() override;
 	    float GetRadius() { return Radius; }
-
+	    bool GetIsReflection() { return IsReflection; }
 		void OnCollision()override;
 	    const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
 
@@ -76,5 +90,7 @@ private:
 		        worldTransform_.matWorld_.m[3][0], worldTransform_.matWorld_.m[3][1],
 		        worldTransform_.matWorld_.m[3][2]};	
 		}
-		
+	    Vector3 GetReticlePos() { return worldTransform3DReticle_.translation_; };
+
+		bool LockOnReticle(Vector3 EnemyPos, const ViewProjection& viewProjection, bool& flag);
 };

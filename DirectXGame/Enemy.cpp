@@ -26,6 +26,7 @@ void Enemy::Initialize(Model* model, Vector3 pos) {
 	(void)test;
 	SetcollisionMask(~kCollisionAttributeEnemy);
 	//Fire();
+	SetMask(Mask::enemy);
 }
 
 void Enemy::Update() {
@@ -93,6 +94,7 @@ void Enemy::Fire() {
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->SetPlayer(player_);
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+	newBullet->SetGameScene(gameScene_);
 	//bullets_.push_back(newBullet);
 	gameScene_->AddEnemyBullet(newBullet);
 }

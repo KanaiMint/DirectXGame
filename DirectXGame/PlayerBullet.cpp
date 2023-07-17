@@ -16,6 +16,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	SetcollisionAttribute(kCollisionAttributePlayer);
 	// 衝突対象を自分の属性以外に設定
 	SetcollisionMask(~kCollisionAttributePlayer);
+	SetMask(Mask::playerbullet);
 }
 
 void PlayerBullet::Update() 
@@ -38,3 +39,5 @@ void PlayerBullet::Draw(const ViewProjection& viewProjection) {
 
 void PlayerBullet::OnCollision() 
 { isDead_ = true; }
+
+void PlayerBullet::OnCollision2() { isDead_ = true; }

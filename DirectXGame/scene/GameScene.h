@@ -41,13 +41,13 @@ public: // メンバ関数
 	/// 毎フレーム処理
 	/// </summary>
 	void Update();
+	void AddEnemyBullet(EnemyBullet* enemyBullet);
 
 	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw();
 
-	void AddEnemyBullet(EnemyBullet* enemyBullet);
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;

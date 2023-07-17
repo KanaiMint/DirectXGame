@@ -9,7 +9,11 @@ private:
 	std::list<Collider*> colliders_;
 	Player* player_;
 	Enemy* enemy_;
-
+	// 自弾リストの取得
+	 std::list<PlayerBullet*> playerBullets;
+	// 敵弾リストの取得
+	 std::list<EnemyBullet*> enemyBullets;
+	           
 public:
 	void Initialize(Player* player);
 	void Update(Player* player, std::list<Enemy*>& enemy, std::list<EnemyBullet*>& enemyBullets_);

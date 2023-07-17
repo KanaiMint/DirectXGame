@@ -23,7 +23,7 @@ private:
 	 Vector3 MoveSpeed = {0, 0, 0.01f};
 	// 敵弾
 	std::list<EnemyBullet*> bullets_;
-	 const uint32_t kbullets_Interval = 60;
+	 const uint32_t kbullets_Interval = 180;
 	uint32_t bullets_cooltime = kbullets_Interval;
 	 Player* player_ = nullptr;
 	bool isDead_ = false;

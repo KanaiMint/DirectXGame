@@ -15,14 +15,21 @@ void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 playerpos)
 	SetcollisionAttribute(kCollisionAttributePlayer);
 	// 衝突対象を自分の属性以外に設定
 	SetcollisionMask(~kCollisionAttributePlayer);
+	SetMask(Mask::player);
 	// 3Dレティクルのワールドトランスフォーム初期化
 	worldTransform3DReticle_.Initialize();
 	// レティクル用テクスチャ取得
 	uint32_t textureReticle = TextureManager::Load("Reticle.png");
+	// 上下判定用テクスチャ取得
+	uint32_t textureHarf = TextureManager::Load("Harf.png");
 	// スプライト生成
 	sprite2DReticle_ = Sprite::Create(
 	    textureReticle, Vector2(WinApp::kWindowWidth * 0.5f, WinApp::kWindowHeight * 0.5f),
-	    {255, 255, 255, 255}, Vector2(0.5, 0.5));
+	    {1, 1, 1, 1}, Vector2(0.5, 0.5));
+
+	sprite2DWindowHarf = Sprite::Create(
+	    textureHarf, Vector2(0,0)
+	    );
 }
 
 Player::~Player() {
@@ -54,22 +61,23 @@ void Player::Update(const ViewProjection& viewProjection) {
 		move.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * kCharacterSpeed;
 	}
 	
-	ReticlePAD(viewProjection);
+	//ReticlePAD(viewProjection);
+	// 照準に向けて打つ
+	// Reticle(viewProjection);
+	// マウスの照準に打つ
+	// ReticleMouse(viewProjection);
 	
-
 	CharaMove(move, kCharacterSpeed); // キャラクター移動処理
-	CharaRotate();                    // キャラクター旋回処理
+	//CharaRotate();             
+	
 	worldTransform_.UpdateMatrix();
 
-	// 照準に向けて打つ
-	//Reticle(viewProjection);
-	//マウスの照準に打つ
-	//ReticleMouse(viewProjection);
+	
 	ViewProjection hoge = viewProjection;
 	
-	worldTransform_.UpdateMatrix();
+	//worldTransform_.UpdateMatrix();
 
-	Attack(); // キャラクター攻撃処理
+	Attack(viewProjection); // キャラクター攻撃処理
 	// 行列をバッファに転送
 	// worldTransform_.TransferMatrix();
 
@@ -117,9 +125,11 @@ void Player::CharaRotate() {
 	} else if (input_->PushKey(DIK_D)) {
 		worldTransform_.rotation_.y += kRotSpeed;
 	}
+
 }
 
 void Player::Draw(ViewProjection viewProjection) {
+	
 	// 3Dモデルを描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 	// 3Dレティクルを描画
@@ -132,7 +142,85 @@ void Player::Draw(ViewProjection viewProjection) {
 	}
 }
 
-void Player::Attack() {
+void Player::Attack(ViewProjection viewProjection) {
+	
+	AttackTime--;
+	if (AttackTime < 0) {
+		AttackTime = 0;
+	}
+	// 3Dのワールド座標から２Dのスクリーン座標を計算
+
+	Vector3 positionWorld = worldTransform_.translation_;
+	// ビューポート行列
+	Matrix4x4 matViewport =
+	    MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+	// ビューポート行列とプロジェクション行列、ビューポート行列を合成する
+	Matrix4x4 matViewProjectionViewport =
+	    Multiply(Multiply(viewProjection.matView, viewProjection.matProjection), matViewport);
+	// ワールドからスクリーン座標返還(ここで３ｄから２ｄへ）
+	positionWorld = Transform(positionWorld, matViewProjectionViewport);
+	//画面の上半分か下半分かどうか
+	if (positionWorld.y >= WinApp::kWindowHeight * 0.5f) {
+		IsWindowUp = true;
+		
+	} else {
+		IsWindowUp = false;	
+
+	}
+	//上半分にいたとき
+	if (IsWindowUp == true) {
+		if (input_->PushKey(DIK_SPACE) && ReflectCoolTime <= 0) {
+			IsReflection = true;
+		}
+	} else if (IsWindowUp == false) {
+	
+	}
+	//反射モードの処理
+	if (IsReflection == true ) {
+		worldTransform_.rotation_.y += ReflectRotateSpeed;
+		ReflectTime++;
+		if (ReflectTime > kMaxReflectTime) {
+			ReflectCoolTime = kMaxReflectCoolTime;
+			ReflectTime = 0;
+			IsReflection = false;
+		}
+	} else if (IsReflection == false) {
+		ReflectCoolTime--;
+
+		worldTransform_.rotation_.y = 0;
+	} // キャラクター旋回処理
+
+
+
+	if (input_->IsPressMouse(0) && AttackTime == 0) {
+		AttackTime = KAttackTimeParsent;
+		////弾があれば開放
+		// if (bullet_) {
+		//	delete bullet_;
+		//	bullet_ = nullptr;
+		// }
+		//  弾の速度
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
+		// 速度ベクトルヲ自機の向きに合わせて回転させる
+		/* velocity = TransformNormal(velocity, worldTransform_.matWorld_);*/
+		// 自機から照準オブジェクトへのベクトル
+		Vector3 playermat = Vector3(
+		    worldTransform_.matWorld_.m[3][0], worldTransform_.matWorld_.m[3][1],
+		    worldTransform_.matWorld_.m[3][2]);
+		velocity = worldTransform3DReticle_.translation_ - playermat;
+		velocity = Vector3::Normalize(velocity) * kBulletSpeed;
+		/* worldTransform_.UpdateMatrix();*/
+		// 弾を生成し、初期化
+		PlayerBullet* newBullet = new PlayerBullet();
+
+		newBullet->Initialize(model_, playermat, velocity);
+
+		// 弾を登録する
+		bullets_.push_back(newBullet);
+	}
+
+
 	XINPUT_STATE joyState;
 	//ゲームパッドが未接続なら何もせず抜ける
 	if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
@@ -181,11 +269,20 @@ Vector3 Player::GetWorldPosition() {
 
 void Player::OnCollision() {}
 
-void Player::DrawUI() { sprite2DReticle_->Draw(); }
+void Player::DrawUI() {
+	sprite2DReticle_->Draw();
+	//sprite2DWindowHarf->Draw();
+}
 
 void Player::SetParent(const WorldTransform* parent) {
 	// 親子関係を結ぶ
 	worldTransform_.parent_ = parent;
+}
+
+void Player::DrawHarf() 
+{
+	//上下判定用画像
+	sprite2DWindowHarf->Draw();
 }
 
 void Player::Reticle(const ViewProjection& viewProjection) {
@@ -318,16 +415,75 @@ void Player::ReticlePAD(const ViewProjection& viewProjection)
 
 }
 
+bool Player::LockOnReticle(Vector3 EnemyPos, const ViewProjection& viewProjection,bool& flag) 
+{	
+	POINT mousePosition;
+	// マウス座標（スクリーン座標)を取得する
+	GetCursorPos(&mousePosition);
+	// クライアントエリア座標に変換する
+	HWND hwnd = WinApp::GetInstance()->GetHwnd();
+	ScreenToClient(hwnd, &mousePosition);
+	// ビューポート行列
+	Matrix4x4 matViewport =
+	    MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+	// ビューポート行列とプロジェクション行列、ビューポート行列を合成する
+	Matrix4x4 matViewProjectionViewport =
+	    Multiply(Multiply(viewProjection.matView, viewProjection.matProjection), matViewport);
+	// ワールドからスクリーン座標返還(ここで３ｄから２ｄへ）
+	Vector3 Enemy2DPos = Transform(EnemyPos, matViewProjectionViewport);
+	// ワールドからスクリーン座標返還(ここで３ｄから２ｄへ）
+	Vector3 positionReticle =
+	    Transform(worldTransform3DReticle_.translation_, matViewProjectionViewport);
+
+	float direction = Vector2::Length(
+	    Vector2(Enemy2DPos.x, Enemy2DPos.y),
+	    Vector2((float)mousePosition.x, (float)mousePosition.y));
+	// スプライトのレティクルに座標設定w
+	if (direction < 50.0f) {
+		flag = true;
+		
+	} 
+	if (direction > 200) {
+		flag = false;
+	}
+	if (flag == true) {
+		worldTransform3DReticle_.translation_ = EnemyPos;
+		worldTransform3DReticle_.UpdateMatrix();
+		// ワールドからスクリーン座標返還(ここで３ｄから２ｄへ）
+		positionReticle =
+		    Transform(worldTransform3DReticle_.translation_, matViewProjectionViewport);
+		// スプライトのレティクルに座標設定
+		sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+		return true;
+	}
+	if (flag == false) {
+		ReticleMouse(viewProjection);
+		return false;
+	}
+		
+	
+
+	ImGui::Begin("Debug");
+	// デバックテキスト表示
+	ImGui::Text("Direction:%f", direction);
+	ImGui::Text("PlayerReticle2D:%f %f", positionReticle.x, positionReticle.y);
+	ImGui::Text("Enemy:%f %f", Enemy2DPos.x, Enemy2DPos.y);
+	// ImGui::InputFloat3("Player", Inputfloat3);
+	// ImGui::SliderFloat3("Player", Inputfloat3,0.0f,1.0f);
+	ImGui::End();
+	return false;
+}
+
 void Player::CharaMove(Vector3& move, const float& kCharacterSpeed) {
-	if (input_->PushKey(DIK_LEFT)) {
+	if (input_->PushKey(DIK_LEFT)||input_->PushKey(DIK_A)) {
 		move.x -= kCharacterSpeed;
-	} else if (input_->PushKey(DIK_RIGHT)) {
+	} else if (input_->PushKey(DIK_RIGHT) || input_->PushKey(DIK_D)) {
 		move.x += kCharacterSpeed;
 	}
 
-	if (input_->PushKey(DIK_UP)) {
+	if (input_->PushKey(DIK_UP) || input_->PushKey(DIK_W)) {
 		move.y += kCharacterSpeed;
-	} else if (input_->PushKey(DIK_DOWN)) {
+	} else if (input_->PushKey(DIK_DOWN) || input_->PushKey(DIK_S)) {
 		move.y -= kCharacterSpeed;
 	}
 	worldTransform_.translation_ += move;

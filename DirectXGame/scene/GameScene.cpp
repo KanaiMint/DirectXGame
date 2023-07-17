@@ -79,11 +79,20 @@ void GameScene::Update() {
 
 //ジキャラの更新
 	player_->Update(viewProjection_);
+	
 	//敵の更新
 	UpdateEnemyPopCommands();
+	bool flag = false;
 	for (Enemy* enemy : enemys_) {
+		
 		enemy->SetPlayer(player_);
 		enemy->Update();	
+		
+		if (player_->LockOnReticle(enemy->GetWorldPosition(), viewProjection_, flag)) {
+			break;
+		}
+			//player_->LockOnReticle(enemy->GetWorldPosition(), viewProjection_, flag);
+		
 		
 	}
 
@@ -155,7 +164,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
-
+	
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
@@ -172,6 +181,7 @@ void GameScene::Draw() {
 	//天球描画
 	skydome_->Draw(viewProjection_);
 	//自キャラの描画
+	
 	player_->Draw(viewProjection_);
 	//敵キャラの描画
 	for (Enemy* enemy : enemys_) {
@@ -188,6 +198,7 @@ void GameScene::Draw() {
 #pragma region 前景スプライト描画
 	// 前景スプライト描画前処理
 	Sprite::PreDraw(commandList);
+	player_->DrawHarf();
 	player_->DrawUI();
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる

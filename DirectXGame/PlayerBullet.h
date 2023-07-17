@@ -37,7 +37,8 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション</param>
 	void Draw(const ViewProjection& viewProjection);
 	inline bool IsDead() const { return isDead_; }
-	void OnCollision()override;
+	void OnCollision() override;
+	void OnCollision2() override;
 	Vector3 GetWorldPosition() override {
 		Vector3 worldPos;
 		// ワールド行列の平行移動成分を取得（ワールド座標)
