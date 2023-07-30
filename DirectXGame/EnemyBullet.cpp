@@ -11,10 +11,9 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	model_ = model;
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
-	worldTransform_.scale_ = {0.5f, 0.5f, 3.0f};
+	worldTransform_.scale_ = {1.0f, 1.0f, 1.0f};
 	velocity_ = vel;
 	worldTransform_.UpdateMatrix();
-
 	worldTransform_.rotation_.x =
 	    std::atan2(-velocity_.y, Vector3::Length({velocity_.x, 0.0f, velocity_.z}));
 
@@ -40,7 +39,7 @@ void EnemyBullet::Update() {
 
 		Vector3 toPlayer = playermpos - worldTransform_.translation_;
 		// 球面線形補間により、今の速度とジキャラのベクトルを内挿し、新たな速度とする
-		if (player_->GetMatworld().m[3][3] < worldTransform_.translation_.z)
+		if (player_->GetMatworld().m[3][3] < worldTransform_.translation_.z-10)
 		{
 			//velocity_ = Slerp(velocity_, toPlayer, 0.03f) * kBulletSpeed;
 			velocity_ = toPlayer.Normalize(toPlayer) * kBulletSpeed;
@@ -56,6 +55,7 @@ void EnemyBullet::Update() {
 	if (IsReflection == true) {
 	
 	}
+	
 
 
 	worldTransform_.translation_ += velocity_;
@@ -73,15 +73,18 @@ void EnemyBullet::Update() {
 	// ImGui::InputFloat3("Player", Inputfloat3);
 	// ImGui::SliderFloat3("Player", Inputfloat3,0.0f,1.0f);
 	ImGui::End();
+
+	Setradius(Radius);
 }
 
 void EnemyBullet::Draw(ViewProjection& viewProjevtion) {
 	model_->Draw(worldTransform_, viewProjevtion, textureHandle_);
 }
 
-void EnemyBullet::OnCollision2() 
+void EnemyBullet::OnCollision2(float damage) 
 { 	
-	//増えるヤツ
+	//増えるヤツ?
+	// 弾で画するのもありかも
 	 // 弾の速度
 	const float kEnemyBulletSpeed = 1.0f;
 	// Vector3 velocity(0, 0, kEnemyBulletSpeed);
@@ -89,19 +92,32 @@ void EnemyBullet::OnCollision2()
 	Vector3 EnemyPos = GetWorldPosition();
 	Vector3 PEVec = (player_->MatWorldPlayerPos() - EnemyPos);
 	Vector3 velocity = Vector3::Normalize(PEVec);
+#pragma region 敵の弾をでかくする
 	velocity.Length({kEnemyBulletSpeed, kEnemyBulletSpeed, kEnemyBulletSpeed});
 
-	// 弾の生成、初期化
-	EnemyBullet* newBullet = new EnemyBullet();
-	newBullet->SetPlayer(player_);
-	newBullet->SetGameScene(gameScene_);
-	newBullet->Initialize(model_, worldTransform_.translation_ +Vector3(1.0f,0,0), velocity);
-	// bullets_.push_back(newBullet);
-	gameScene_->AddEnemyBullet(newBullet);
-	//isDead_ = true;
+#pragma endregion
+
+	worldTransform_.scale_ = Vector3::Add(worldTransform_.scale_, worldTransform_.scale_*0.5f);
+	Radius = Radius + 1.5f;
+	#pragma region 弾増やす処理
+
+
+	//// 弾の生成、初期化
+	//EnemyBullet* newBullet = new EnemyBullet();
+	//newBullet->SetPlayer(player_);
+	//newBullet->SetGameScene(gameScene_);
+	//newBullet->Initialize(model_, worldTransform_.translation_ +Vector3(1.0f,0,0), velocity);
+	//// bullets_.push_back(newBullet);
+	//gameScene_->AddEnemyBullet(newBullet);
+	////isDead_ = true;
+#pragma endregion
+
+	damage = damage;
+	
+	
 }
 
-void EnemyBullet::OnCollision() {
+void EnemyBullet::OnCollision(float damage) {
 	//
 	if (player_->GetIsReflection() == true) {
 		IsReflection = true;
@@ -114,10 +130,23 @@ void EnemyBullet::OnCollision() {
 		// 衝突対象を自分の属性以外に設定
 		SetcollisionMask(~kCollisionAttributePlayer);
 		// isDead_ = true;
+
+		// 弾を生成し、初期化
+		PlayerBullet* newBullet = new PlayerBullet();
+		Vector3 EnemyPos = GetWorldPosition();
+		Vector3 PEVec = (player_->GetReticlePos() - player_->MatWorldPlayerPos());
+		Vector3 velocity = Vector3::Normalize(PEVec)*0.5f;
+		
+		newBullet->Initialize(model_, player_->getplayermatpos(), velocity, false,Radius,worldTransform_.scale_);
+
+		// 弾を登録する
+		player_->GetsBullets(newBullet);
+		isDead_ = true;
 	} else {
 
 		isDead_ = true;
 	}
+	damage = damage;
 }
 
 Vector3 EnemyBullet::GetWorldPosition() {

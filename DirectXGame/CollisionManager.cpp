@@ -130,32 +130,70 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 
 	float distance = std::pow(posB.x - posA.x, 2.0f) + std::powf(posB.y - posA.y, 2.0f) +
 	                 std::pow(posB.z - posA.z, 2.0f);
-	if (colliderA == player_ || colliderB == player_) {
-		if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
-			colliderA->OnCollision();
-			colliderB->OnCollision();
-		}
-	}
-	if (colliderA == enemy_ || colliderB == enemy_) {
-		if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
-			colliderA->OnCollision();
-			colliderB->OnCollision();
-		}
-	}
+
+	
+
+	//弾と敵弾
+	#pragma region 弾と弾
 	if (colliderA->GetMask() == Collider::Mask::enemybullet &&
 	    colliderB->GetMask() == Collider::Mask::playerbullet) {
 
 		if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
-			colliderA->OnCollision2();
-			colliderB->OnCollision2();
+			colliderA->OnCollision2(colliderB->Getradius());
+			colliderB->OnCollision2(colliderA->Getradius());
 		}
 	}
 	if (colliderB->GetMask() == Collider::Mask::enemybullet &&
 	    colliderA->GetMask() == Collider::Mask::playerbullet) {
 
 		if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
-			colliderA->OnCollision2();
-			colliderB->OnCollision2();
+			colliderA->OnCollision2(colliderB->Getradius());
+			colliderB->OnCollision2(colliderA->Getradius());
 		}
 	}
+
+	if (colliderA->GetMask() == Collider::Mask::enemybullet &&
+	    colliderB->GetMask() == Collider::Mask::playerbulletIsUp) {
+
+		if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
+			//colliderA->OnCollision();
+			//colliderB->OnCollision();
+		}
+	}
+	if (colliderB->GetMask() == Collider::Mask::enemybullet &&
+	    colliderA->GetMask() == Collider::Mask::playerbulletIsUp) {
+
+		if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
+			//colliderB->OnCollision();
+			//colliderA->OnCollision();
+		}
+	}
+#pragma endregion
+
+	#pragma region どっちかがプレイヤーか敵
+
+
+	if (colliderA->GetMask() == Collider::Mask::player ||
+	    colliderB->GetMask() == Collider::Mask::player) {
+		if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
+			colliderA->OnCollision(colliderB->Getradius());
+			colliderB->OnCollision(colliderA->Getradius());
+		}
+	}
+	if (colliderA->GetMask() == Collider::Mask::enemy &&
+	    colliderB->GetMask() == Collider::Mask::playerbullet) {
+		if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
+			/*colliderA->OnCollision();
+			colliderB->OnCollision();*/
+		}
+	}
+	if (colliderA->GetMask() == Collider::Mask::enemy &&
+	    colliderB->GetMask() == Collider::Mask::playerbulletIsUp) {
+		if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
+			colliderA->OnCollision(colliderB->Getradius());
+			colliderB->OnCollision(colliderA->Getradius());
+		}
+	}
+
+#pragma endregion
 }

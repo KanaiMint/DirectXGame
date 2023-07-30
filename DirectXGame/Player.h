@@ -20,8 +20,15 @@ private:
 	Sprite* sprite2DReticle_ = nullptr;
 	//上下どっちにいるか用スプライト
 	Sprite* sprite2DWindowHarf = nullptr;
+	//ゲージスプライト
+	Sprite* spriteGauge=nullptr;
+	//ゲージスプライト
+	Sprite* spriteGaugeBar=nullptr;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
+	Sprite* mouseSprite = nullptr;
+	Sprite* moveSprite = nullptr;
+	Sprite* SpaceSprite = nullptr;
 	//キーボード入力
 	Input* input_ = nullptr;
 
@@ -45,7 +52,18 @@ private:
 	int AttackTime = 0;
 	const int KAttackTimeParsent = 20;//発射感覚
 	bool IsWindowUp = false;
-
+	float damageTime=0;
+	const float kBulletSpeed = 3.0f;
+	float Score = 0;
+	uint32_t textureNum=0u;
+	Sprite* manssprite = nullptr;
+	Sprite* senssprite = nullptr;
+	Sprite* tenssprite = nullptr;
+	Sprite* minssprite = nullptr;
+	int sensPlace=0;
+	int tensPlace=0;
+	int mansPlace=0;
+	int minsPlace=0;
 	public:
 		/// <summary>
 		/// 
@@ -67,7 +85,7 @@ private:
 	    Vector3 GetWorldPosition() override;
 	    float GetRadius() { return Radius; }
 	    bool GetIsReflection() { return IsReflection; }
-		void OnCollision()override;
+	    void OnCollision(float damage) override;
 	    const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
 
 		void SetParent(const WorldTransform* parent);
@@ -93,4 +111,13 @@ private:
 	    Vector3 GetReticlePos() { return worldTransform3DReticle_.translation_; };
 
 		bool LockOnReticle(Vector3 EnemyPos, const ViewProjection& viewProjection, bool& flag);
+	    void GetsBullets(PlayerBullet* bullets);
+	    Vector3 getplayermatpos() {
+		    return  Vector3(
+		               worldTransform_.matWorld_.m[3][0], worldTransform_.matWorld_.m[3][1],
+		               worldTransform_.matWorld_.m[3][2]);
+	    }
+	    void GaugeDraw();
+	    void ScoreUp();
+	    void DrawScore();
 };

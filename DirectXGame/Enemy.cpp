@@ -9,6 +9,7 @@ Enemy::~Enemy() {
 
 void Enemy::Initialize(Model* model, Vector3 pos) {
 	textureHandle_ = TextureManager::Load("kuppa.jpg");
+	textureHandle2_ = TextureManager::Load("RED.png");
 	model_ = model;
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = pos;
@@ -30,6 +31,16 @@ void Enemy::Initialize(Model* model, Vector3 pos) {
 }
 
 void Enemy::Update() {
+	if (isDameged) {
+		Damagetime -= 0.1f;
+		if (Damagetime <= 0) {
+			isDameged = false;
+		}
+
+	}
+	if (Damagetime > 0) {
+		isDameged = true;
+	}
 	////ですフラグの立った球の削除
 	// bullets_.remove_if([](EnemyBullet* bullet) {
 	//	if (bullet->IsDead() == true) {
@@ -54,6 +65,10 @@ void Enemy::Update() {
 		worldTransform_.translation_ += {0.2f, 0.15f, 0.0f};
 		break;
 	}
+	if (HP <= 0) {
+		isDead_ = true;
+		player_->ScoreUp();
+	}
 }
 
 void Enemy::Approach() {
@@ -67,13 +82,18 @@ void Enemy::Approach() {
 	}
 
 	// 規定の位置に達したら離脱
-	if (worldTransform_.translation_.z < -30.0f) {
+	if (worldTransform_.translation_.z < 5.0f) {
 		phese_ = Phese::Leave;
 	}
 }
 
 void Enemy::Draw(ViewProjection viewProjection) {
-	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	if (!isDameged) {
+		model_->Draw(worldTransform_, viewProjection);
+	}
+	if (isDameged) {
+		model_->Draw(worldTransform_, viewProjection, textureHandle2_);	
+	}
 	//  // 敵弾描画
 	//  for (EnemyBullet* bullet : bullets_) {
 	// bullet->Draw(viewProjection);
@@ -91,9 +111,11 @@ void Enemy::Fire() {
 	velocity.Length({kEnemyBulletSpeed, kEnemyBulletSpeed, kEnemyBulletSpeed});
 
 	// 弾の生成、初期化
+	Model* modelcube = nullptr;
+	modelcube = Model::Create();
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->SetPlayer(player_);
-	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+	newBullet->Initialize(modelcube, worldTransform_.translation_, velocity);
 	newBullet->SetGameScene(gameScene_);
 	//bullets_.push_back(newBullet);
 	gameScene_->AddEnemyBullet(newBullet);
@@ -111,4 +133,18 @@ Vector3 Enemy::GetWorldPosition() {
 	return Vector3(worldPos);
 }
 
-void Enemy::OnCollision() { isDead_ = true; }
+void Enemy::OnCollision(float damage) {
+	if (damage > 4.5f) {
+		isDead_ = true;
+		player_->ScoreUp();
+	} else {
+
+		HP -= damage;
+		Damagetime = 1.0f;
+	}
+}
+void Enemy::OnCollision2(float damage) {
+	/*HP -= 1;
+	Damagetime = 1.0f;*/
+	damage = damage;
+}

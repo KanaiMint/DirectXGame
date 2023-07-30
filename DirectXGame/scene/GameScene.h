@@ -61,9 +61,11 @@ private: // メンバ変数
 	ViewProjection viewProjection_;
 	// ジキャラ
 	Player* player_ = nullptr;
+	Model* modelPlayer_ = nullptr;
 	// 敵キャラ
 	// Enemy* enemy_ = nullptr;
 	std::list<Enemy*> enemys_;
+	Model* modelEnemy_ = nullptr;
 
 	// 敵弾リスト
 	std::list<EnemyBullet*> enemyBullets_;
@@ -86,7 +88,8 @@ private: // メンバ変数
 
 	void CheckAllCollision();
 	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
-
+	Sprite* TitleSprite = nullptr;
+	Sprite* ClearSprite = nullptr;
 	
 
 	// 敵発生コマンド
@@ -104,5 +107,11 @@ private: // メンバ変数
 
 	bool isWait;
 	int32_t WaitTime;
+
+	enum Scene {
+		Title,
+		Stage
+	};
+	Scene scene = Title;
 
 };

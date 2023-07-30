@@ -11,7 +11,7 @@ void RailCamera::Initialize(const Vector3 worldpos, Vector3 radian) {
 
 void RailCamera::Update() 
 { 
-	worldTransform_.translation_ += {0.0f,0.0f,-0.01f};
+	worldTransform_.translation_ += {0.0f,0.0f,0.0f};
 	worldTransform_.rotation_ += {0.0f,0.0f,0.0f};
 	worldTransform_.matWorld_ = MakeAffineMatrix(
 	    worldTransform_.scale_,
@@ -22,14 +22,15 @@ void RailCamera::Update()
 	//カメラオブジェクトのワールド行列からビュー行列を計算する
 	viewProjection_.matView = Inverse(worldTransform_.matWorld_);
 	//カメラの座標を画面表示する処理
-	ImGui::Begin("Camera");
-	// デバックテキスト表示
-	ImGui::Text(
-	    "CameraTransform %f,%f,%f", worldTransform_.translation_.x, worldTransform_.translation_.y,
-	    worldTransform_.translation_.z);
-	ImGui::Text(
-	    "CameraRotate %f,%f,%f", worldTransform_.rotation_.x, worldTransform_.rotation_.y,
-	    worldTransform_.rotation_.z);
-	ImGui::End();
+	//ImGui::Begin("Camera");
+	//// デバックテキスト表示
+	//ImGui::Text(
+	//    "CameraTransform %f,%f,%f", worldTransform_.translation_.x, worldTransform_.translation_.y,
+	//    worldTransform_.translation_.z);
+	//ImGui::Text(
+	//    "CameraRotate %f,%f,%f", worldTransform_.rotation_.x, worldTransform_.rotation_.y,
+	//    worldTransform_.rotation_.z);
+	//ImGui::DragFloat3("cameraRotate", &worldTransform_.rotation_.x, 0.1f);
+	//ImGui::End();
 
 }

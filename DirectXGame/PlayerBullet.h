@@ -19,6 +19,8 @@ class PlayerBullet :public Collider{
 	//ですフラグ
 	bool isDead_ = false;
 	float Radius = 1.0f;
+	bool isHarfUpWindow = false;
+	
 
 public:
 	/// <summary>
@@ -26,7 +28,11 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="position">初期座標</param>
-	void Initialize(Model* model, const Vector3& position, const Vector3& velocity);
+	void Initialize(
+	    Model* model, const Vector3& position, const Vector3& velocity, bool isharfwindow);
+	void Initialize(
+	    Model* model, const Vector3& position, const Vector3& velocity, bool isharfwindow,
+	    float radius, Vector3 scale);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -37,8 +43,8 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション</param>
 	void Draw(const ViewProjection& viewProjection);
 	inline bool IsDead() const { return isDead_; }
-	void OnCollision() override;
-	void OnCollision2() override;
+	void OnCollision(float damage) override;
+	void OnCollision2(float damage) override;
 	Vector3 GetWorldPosition() override {
 		Vector3 worldPos;
 		// ワールド行列の平行移動成分を取得（ワールド座標)

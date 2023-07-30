@@ -21,6 +21,7 @@ class EnemyBullet :public Collider{
 	    float Radius = 1.0f;
 	    bool IsReflection = false;
 	    float kBulletSpeed = 0.4f;
+	    int HP = 1;
 
 	public:
 	    ~EnemyBullet();
@@ -30,8 +31,8 @@ class EnemyBullet :public Collider{
 	    void Draw(ViewProjection& viewProjevtion);
 	    inline bool IsDead() const { return isDead_; }
 	    void SetPlayer(Player* player) { player_ = player; }
-	    void OnCollision() override;
-	    void OnCollision2() override;
+	    void OnCollision(float damage) override;
+	    void OnCollision2(float damage) override;
 	    Vector3 GetWorldPosition()override;
 	    float GetRadius() { return Radius; }
 	    void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }

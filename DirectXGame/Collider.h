@@ -12,7 +12,7 @@ private:
 	uint32_t collisionMask_ = 0xffffffff;
 
 public:
-	enum Mask { enemy, enemybullet, player, playerbullet };
+	enum Mask { enemy, enemybullet, player, playerbullet, playerbulletIsUp };
 	Mask mask_;
 	
 	// 半径を取得
@@ -21,8 +21,8 @@ public:
 	void SetMask(Mask mask) { mask_ = mask; }
 	int GetMask() { return mask_; }
 	// 衝突時に呼ばれる関数
-	virtual void OnCollision();
-	virtual void OnCollision2();
+	virtual void OnCollision(float damage);
+	virtual void OnCollision2(float damage);
 	// ワールド座標を取得
 	virtual Vector3 GetWorldPosition() = 0;
 

@@ -14,5 +14,5 @@ public:
 	void Initialize(Model*model);
 	void Update();
 	void Draw(ViewProjection viewprojection);
-
+	bool isClear;
 };
