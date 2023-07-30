@@ -4,6 +4,7 @@ void CollisionManager::Initialize(Player* player /*, Enemy* enemy*/) {
 
 	player_ = player;
 	/*enemy_ = enemy;*/
+	
 }
 
 void CollisionManager::Update(
@@ -141,6 +142,7 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 		if (distance <= std::powf(colliderA->Getradius() + colliderB->Getradius(), 2.0f)) {
 			colliderA->OnCollision2(colliderB->Getradius());
 			colliderB->OnCollision2(colliderA->Getradius());
+
 		}
 	}
 	if (colliderB->GetMask() == Collider::Mask::enemybullet &&

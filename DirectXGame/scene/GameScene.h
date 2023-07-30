@@ -113,5 +113,5 @@ private: // メンバ変数
 		Stage
 	};
 	Scene scene = Title;
-
+	uint32_t sound;
 };

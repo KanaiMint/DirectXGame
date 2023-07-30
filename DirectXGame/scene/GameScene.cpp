@@ -81,7 +81,10 @@ void GameScene::Initialize() {
 	TitleSprite = Sprite::Create(Titletex, {640, 200}, {1, 1, 1, 1}, {0.5f, 0.5f});
 	ClearSprite =
 	    Sprite::Create(TextureManager::Load("Clear.png"), {640, 360}, {1, 1, 1, 1}, {0.5f, 0.5f});
-	
+	 sound = audio_->LoadWave("BGM.mp3");
+	audio_->Initialize();
+	audio_->PlayWave(sound, true, 0.5f);
+	// audio_->ResumeWave(sound);
 }
 
 void GameScene::Update() {
@@ -90,6 +93,7 @@ void GameScene::Update() {
 	case GameScene::Title:
 		if (input_->TriggerKey(DIK_SPACE)) {
 			scene = Stage;
+			
 		}
 		// ジキャラの更新
 		player_->Update(viewProjection_);
@@ -203,6 +207,7 @@ void GameScene::Update() {
 
 					scene = Title;
 					this->Initialize();
+					audio_->PauseWave(sound);
 				}
 			}
 		}
@@ -487,5 +492,6 @@ void GameScene::EnemyPop(Vector3 v, Model* model) {
 	enemy->SetPlayer(player_);
 	enemy->SetGameScene(this);
 	enemy->Initialize(model, v);
+	enemy->Update();
 	enemys_.push_back(enemy);
 }

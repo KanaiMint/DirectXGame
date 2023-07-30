@@ -3,6 +3,7 @@
 #include "Enemy.h"
 #include "Player.h"
 #include <list>
+#include "Audio.h"
 class CollisionManager {
 private:
 	// コライダーリスト
@@ -13,8 +14,9 @@ private:
 	 std::list<PlayerBullet*> playerBullets;
 	// 敵弾リストの取得
 	 std::list<EnemyBullet*> enemyBullets;
-	           
-public:
+	
+
+ public:
 	void Initialize(Player* player);
 	void Update(Player* player, std::list<Enemy*>& enemy, std::list<EnemyBullet*>& enemyBullets_);
 	void CheckAllCollision(std::list<Enemy*>& enemys, std::list<EnemyBullet*>& enemyBullets_);

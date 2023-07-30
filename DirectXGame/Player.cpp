@@ -234,7 +234,7 @@ void Player::Attack(ViewProjection viewProjection) {
 		}
 	} else if (IsReflection == false) {
 
-		ReflectCoolTime--;
+		ReflectCoolTime-=2;
 
 		worldTransform_.rotation_.y = 0;
 	} // キャラクター旋回処理
